@@ -22,19 +22,31 @@ themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("light-mode");
 });
 
+
 const revealElements = document.querySelectorAll(".reveal");
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add("active");
-        }
+
+if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("active");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.05,
+        rootMargin: "0px 0px 50px 0px"
     });
-}, {
-    threshold: 0.15
-});
-revealElements.forEach((element) => {
-    revealObserver.observe(element);
-});
+
+    revealElements.forEach((element) => {
+        revealObserver.observe(element);
+    });
+} else {
+    revealElements.forEach((element) => {
+        element.classList.add("active");
+    });
+}
+
 
 const backToTop = document.querySelector(".back-to-top");
 window.addEventListener("scroll", () => {
